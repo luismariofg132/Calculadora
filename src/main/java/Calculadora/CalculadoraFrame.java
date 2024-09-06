@@ -15,6 +15,7 @@ public class CalculadoraFrame extends javax.swing.JFrame {
     private boolean haySigno = false;
     public double result = 0;
     Operaciones _operaciones = new Operaciones();
+    private String operador = null; 
 
     /**
      * Creates new form CalculadoraFrame
@@ -90,10 +91,25 @@ public class CalculadoraFrame extends javax.swing.JFrame {
         });
 
         equal.setText("=");
+        equal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                equalActionPerformed(evt);
+            }
+        });
 
         divided.setText("/");
+        divided.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dividedActionPerformed(evt);
+            }
+        });
 
         multiplicar.setText("*");
+        multiplicar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                multiplicarActionPerformed(evt);
+            }
+        });
 
         minus.setText("-");
         minus.addActionListener(new java.awt.event.ActionListener() {
@@ -393,8 +409,13 @@ public class CalculadoraFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_pointActionPerformed
 
     private void plusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusActionPerformed
-        capturarDatos();
-        op = 1;
+        // Capturamos el valor actual del display antes de cambiar de operador
+        if (!display.getText().isEmpty()) {
+            capturarDatos(); // Asegurarnos de capturar m2 y realizar la operación si ya hay un operador
+        }
+        
+        op = 1; 
+        display.setText(""); 
     }//GEN-LAST:event_plusActionPerformed
 
     private void displayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayActionPerformed
@@ -406,90 +427,196 @@ public class CalculadoraFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_displayResultActionPerformed
 
     private void minusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minusActionPerformed
-        // TODO add your handling code here:
+        if (!display.getText().isEmpty()) {
+            capturarDatos(); // Asegurarnos de capturar m2 y realizar la operación si ya hay un operador
+        }
+        
+        op = 2; 
+        display.setText(""); 
     }//GEN-LAST:event_minusActionPerformed
 
     private void btnDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelActionPerformed
-        // TODO add your handling code here:
+        String textDisplay = display.getText();
+        if (textDisplay == null || textDisplay.isEmpty()) {       
+            display.setText(textDisplay);
+            return;
+        }
+   
+        display.setText(textDisplay.substring(0, textDisplay.length() - 1));
     }//GEN-LAST:event_btnDelActionPerformed
 
     private void btnExpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExpActionPerformed
-        // TODO add your handling code here:
+        String input = display.getText().trim();
+        m1 = input;
+        op = 5; 
+        display.setText("");
+        calcular();
     }//GEN-LAST:event_btnExpActionPerformed
 
     private void btnAcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcActionPerformed
-        // TODO add your handling code here:
+        reset();
+        display.setText(""); 
+        displayResult.setText(""); 
     }//GEN-LAST:event_btnAcActionPerformed
 
     private void btnSinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSinActionPerformed
-        // TODO add your handling code here:
+        String input = display.getText().trim();
+        m1 = input;
+        op = 7; 
+        display.setText("");
+        calcular();
     }//GEN-LAST:event_btnSinActionPerformed
 
     private void btnCosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCosActionPerformed
-        // TODO add your handling code here:
+        String input = display.getText().trim();
+        m1 = input;
+        op = 8; 
+        display.setText("");
+        calcular();
     }//GEN-LAST:event_btnCosActionPerformed
 
     private void btnSqrtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSqrtActionPerformed
-        // TODO add your handling code here:
+        String input = display.getText().trim();
+        m1 = input;
+        op = 9; 
+        display.setText("");
+        calcular();
     }//GEN-LAST:event_btnSqrtActionPerformed
 
     private void btnLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogActionPerformed
-        // TODO add your handling code here:
+        String input = display.getText().trim();
+        m1 = input;
+        op = 6; 
+        display.setText("");
+        calcular();
     }//GEN-LAST:event_btnLogActionPerformed
 
-    private void capturarDatos(){
-        if(m1 == null || m1.isEmpty()){
-            m1 = display.getText();
-            displayResult.setText(m1);
-            //label.setText("Entro m1");
-        } else {
-            m2 = display.getText();
-            displayResult.setText("");
-            displayResult.setText(m2);
-            //label.setText("Entro m2");
-            calcular();
-            m1 = null;
-            m2 = null;
+    private void multiplicarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_multiplicarActionPerformed
+        if (!display.getText().isEmpty()) {
+            capturarDatos();
         }
         
+        op = 3; 
+        display.setText(""); 
+    }//GEN-LAST:event_multiplicarActionPerformed
+
+    private void dividedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dividedActionPerformed
+        if (!display.getText().isEmpty()) {
+            capturarDatos();
+        }
+        
+        op = 4; 
+        display.setText(""); 
+    }//GEN-LAST:event_dividedActionPerformed
+
+    private void equalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_equalActionPerformed
+        calcular();
+    }//GEN-LAST:event_equalActionPerformed
+
+    private void capturarDatos() {
+        // Capturamos el texto del display
+        String input = display.getText().trim();
+
+        // Si el display está vacío, no hacemos nada
+        if (input.isEmpty()) {
+            return;
+        }
+
+        // Si m1 es null o vacío, asignamos el primer número
+        if (m1 == null || m1.isEmpty()) {
+            m1 = input;
+            displayResult.setText(m1); // Mostrar el primer número capturado
+        }
+        // Si ya hay un operador seleccionado y m1 está lleno, asignamos el segundo número (m2)
+        else if (op != 0 && m2 == null) {
+            m2 = input;
+            calcular(); // Realizamos la operación con m1, operador y m2
+        }
+
+        // Limpiamos el display para la siguiente entrada
         display.setText("");
     }
-    
-    private void calcular(){
-        if (haySigno){
-            haySigno = false;
-            obtenerResultado();
-        }else {
-            haySigno = true;
-        }
-    }
-    
-    private void obtenerResultado(){
-    try {
-            switch(op){
+
+    // Método para calcular la operación actual
+    private void calcular() {
+        try {
+            double num1 = 0;
+            double num2 = 0;
+
+            if (m1 != null) {
+                num1 = Double.parseDouble(m1);
+            }
+
+            if (m2 != null) {
+                num2 = Double.parseDouble(m2);
+            }
+            double resultado = 0;
+
+            // Ejecutar la operación según el operador seleccionado
+            switch (op) {
                 case 1: // Suma
-                    displayResult.setText(String.valueOf(_operaciones.Addition(Double.parseDouble(m1), Double.parseDouble(m2))));
-                    display.setText("Llego");
+                    resultado = _operaciones.Addition(num1, num2);
                     break;
                 case 2: // Resta
-                    displayResult.setText(String.valueOf(_operaciones.Subtraction(Double.parseDouble(m1), Double.parseDouble(m2))));
+                    resultado = _operaciones.Subtraction(num1, num2);
                     break;
-                case 3: // Multiplicacion
-                    displayResult.setText(String.valueOf(_operaciones.Multiplication(Double.parseDouble(m1), Double.parseDouble(m2))));
+                case 3: // Multiplicación
+                    resultado = _operaciones.Multiplication(num1, num2);
                     break;
-                case 4: // Division
-                    displayResult.setText(String.valueOf(_operaciones.Divided(Double.parseDouble(m1), Double.parseDouble(m2))));
+                case 4: // División
+                    if (num2 != 0) {
+                        resultado = _operaciones.Divided(num1, num2);
+                    } else {
+                        displayResult.setText("Error: División por cero");
+                        reset();
+                        return;
+                    }
+                    break;
+                case 5: // Exponente al cuadrado
+                    resultado = _operaciones.square(num1);
+                    break;         
+                case 6: // Logaritmo en base 10
+                    if (num1 > 0) {
+                        resultado = _operaciones.logBase10(num1);
+                    } else {
+                        displayResult.setText("Error: El logaritmo debe ser de un número positivo");
+                        reset();
+                        return;
+                    }
+                    break;
+                case 7: // Seno
+                    resultado = _operaciones.Sin(num1);
+                    break;
+                case 8: // Coseno
+                    resultado = _operaciones.Cos(num1);
+                    break;
+                case 9:
+                    resultado = _operaciones.Sqrt(num1);
                     break;
                 default:
                     displayResult.setText("Operación no válida");
-                    break;
+                    reset();
+                    return;
             }
+
+            // Mostrar el resultado y actualizar m1 para la siguiente operación
+            m1 = String.valueOf(resultado);
+            displayResult.setText(m1);
+            m2 = null; // Reiniciar m2 para futuras operaciones
+
         } catch (NumberFormatException e) {
             displayResult.setText("Error: Entrada no válida");
-        } catch (NullPointerException e) {
-            displayResult.setText("Error: Valor no encontrado");
+            reset();
         }
     }
+
+    // Método auxiliar para reiniciar los valores
+    private void reset() {
+        m1 = null;
+        m2 = null;
+        op = 0; // Reinicia también el tipo de operación si es necesario
+    }
+
 
     
     /**
